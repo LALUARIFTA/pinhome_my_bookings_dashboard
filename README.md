@@ -1,5 +1,7 @@
 # PinHome — My Bookings Dashboard
 
+![PinHome Dashboard Preview](image.png)
+
 Dashboard template untuk manajemen properti sewa jangka pendek (short-term rental): bookings, rate plans, apartments, smart pricing, dan support — semuanya dalam satu halaman.
 
 > Template frontend murni (HTML + CSS + JS). Semua data adalah data demo di `assets/js/config.js`. Siap dipakai banyak orang: ganti identitas host & data melalui satu file konfigurasi.
@@ -9,6 +11,7 @@ Dashboard template untuk manajemen properti sewa jangka pendek (short-term renta
 ```
 pinhome_my_bookings_dashboard/
 ├── index.html              # Entry point (markup semua view & modal)
+├── image.png               # Preview screenshot
 ├── assets/
 │   ├── css/
 │   │   └── style.css       # Design system & komponen kustom (non-Tailwind)
