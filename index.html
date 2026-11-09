@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PinHome — My Bookings Dashboard. Property management dashboard for short-term rental hosts." />
+  <title>PinHome — My Bookings Dashboard</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 28' fill='none'%3E%3Cpath d='M13 1.5C7.201 1.5 2.5 6.201 2.5 12C2.5 18.25 10.35 24.4 12.42 25.92C12.76 26.17 13.24 26.17 13.58 25.92C15.65 24.4 23.5 18.25 23.5 12C23.5 6.201 18.799 1.5 13 1.5Z' stroke='%2329a399' stroke-width='1.8'/%3E%3Cpath d='M8.5 12.2L13 8.3L17.5 12.2' stroke='%23fae06c' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 11.5V16.2H16V11.5' stroke='%2329a399' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            skyBg: '#dff3fc',
+            tealPrimary: '#29a399',
+            tealDark: '#1e877e',
+            tealCard: '#4cb4ab',
+            navyText: '#1e2538',
+            greyMuted: '#9ba3b5',
+            yellowAccent: '#fae06c',
+            yellowHover: '#f5d442',
+            cyanBar: '#dcf5fb',
+            cyanBarMid: '#aee8f7',
+            cyanCard: '#bcebf7',
+            pinkPastel: '#f4b8c8',
+            pinkMoon: '#f3ced5',
+            approvedBg: '#def4f0',
+            approvedText: '#29a399',
+            pendingBg: '#fef8df',
+            pendingText: '#e5c138',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Project Styles -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-5 lg:p-8 select-none">
+
+  <!-- Decorative Subtle Background Waves -->
+  <div class="bg-waves">
+    <svg class="w-full h-full" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M-100 520 C 300 530, 500 820, 480 950" stroke="#c3e7f7" stroke-width="2.5" fill="none"/>
+      <path d="M1280 200 C 1380 200, 1420 260, 1340 420 C 1260 580, 1320 780, 1500 840" stroke="#c3e7f7" stroke-width="2.5" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- MAIN APPLICATION CONTAINER -->
+  <div id="appContainer" class="app-frame w-full max-w-[1160px] flex flex-col lg:flex-row transition-all duration-500">
+
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside class="w-full lg:w-[225px] xl:w-[235px] flex-shrink-0 flex flex-col justify-between text-white pt-4 pb-3 lg:py-6">
+
+      <!-- Top Brand Logo + Mobile Menu Toggle -->
+      <div>
+        <div class="flex items-center justify-between px-6 lg:pl-7 lg:pr-4 mb-6 lg:mb-8">
+          <a href="#bookings" onclick="switchNav('Bookings'); return false;" class="flex items-center gap-2.5 group focus:outline-none">
+            <div class="w-8 h-8 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+              <svg width="26" height="28" viewBox="0 0 26 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 1.5C7.201 1.5 2.5 6.201 2.5 12C2.5 18.25 10.35 24.4 12.42 25.92C12.76 26.17 13.24 26.17 13.58 25.92C15.65 24.4 23.5 18.25 23.5 12C23.5 6.201 18.799 1.5 13 1.5Z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8.5 12.2L13 8.3L17.5 12.2" stroke="#fae06c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 11.5V16.2H16V11.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="text-[17px] font-bold tracking-tight text-white">PinHome</span>
+          </a>
+
+          <!-- Mobile Collapse Button -->
+          <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Navigation Menu List with Sliding Active Indicator Pill -->
+        <nav id="sidebarNav" class="relative hidden lg:flex flex-col space-y-1 pl-4 lg:pl-4 pr-0">
+
+          <!-- FLUID SLIDING WHITE ACTIVE PILL WITH INVERTED CURVES -->
+          <div id="active-nav-pill" style="top: 96px; height: 44px;"></div>
+
+          <!-- 1. Home -->
+          <button onclick="switchNav('Home')" data-nav="Home" class="nav-item flex items-center gap-3.5 pl-5 pr-4 text-[13.5px] font-medium text-white/90 hover:text-white text-left w-full rounded-l-full">
+            <span class="nav-icon w-5 h-5 flex items-center justify-center flex-shrink-0" data-icon="Home"></span>
+            <span class="truncate">Home</span>
+          </button>
+
+          <!-- 2. Rate plans -->
+          <button onclick="switchNav('Rate plans')" data-nav="Rate plans" class="nav-item flex items-center gap-3.5 pl-5 pr-4 text-[13.5px] font-medium text-white/90 hover:text-white text-left w-full rounded-l-full">
+            <span class="nav-icon w-5 h-5 flex items-center justify-center flex-shrink-0" data-icon="Rate plans"></span>
+            <span class="truncate">Rate plans</span>
+          </button>
+
+          <!-- 3. Bookings (Active by default) -->
+          <button onclick="switchNav('Bookings')" data-nav="Bookings" class="nav-item active flex items-center gap-3.5 pl-5 pr-4 text-[13.5px] text-left w-full rounded-l-full">
+            <span class="nav-icon w-5 h-5 flex items-center justify-center flex-shrink-0" data-icon="Bookings"></span>
+            <span class="truncate">Bookings</span>
+          </button>
+
+          <!-- 4. Apartments -->
+          <button onclick="switchNav('Apartments')" data-nav="Apartments" class="nav-item flex items-center gap-3.5 pl-5 pr-4 text-[13.5px] font-medium text-white/90 hover:text-white text-left w-full rounded-l-full">
+            <span class="nav-icon w-5 h-5 flex items-center justify-center flex-shrink-0" data-icon="Apartments"></span>
+            <span class="truncate">Apartments</span>
+          </button>
+
+          <!-- 5. Pricing -->
+          <button onclick="switchNav('Pricing')" data-nav="Pricing" class="nav-item flex items-center gap-3.5 pl-5 pr-4 text-[13.5px] font-medium text-white/90 hover:text-white text-left w-full rounded-l-full">
+            <span class="nav-icon w-5 h-5 flex items-center justify-center flex-shrink-0" data-icon="Pricing"></span>
+            <span class="truncate">Pricing</span>
+          </button>
+
+          <!-- Spacer -->
+          <div class="h-4 pointer-events-none"></div>
+
+          <!-- 6. Support -->
+          <button onclick="switchNav('Support')" data-nav="Support" class="nav-item flex items-center gap-3.5 pl-5 pr-4 text-[13.5px] font-medium text-white/90 hover:text-white text-left w-full rounded-l-full">
+            <span class="nav-icon w-5 h-5 flex items-center justify-center flex-shrink-0" data-icon="Support"></span>
+            <span class="truncate">Support</span>
+            <span class="ml-auto mr-2 w-2 h-2 rounded-full bg-[#fae06c]"></span>
+          </button>
+
+          <!-- 7. LogOut -->
+          <button onclick="openLogoutModal()" data-nav="LogOut" class="nav-item flex items-center gap-3.5 pl-5 pr-4 text-[13.5px] font-medium text-white/90 hover:text-white text-left w-full rounded-l-full">
+            <span class="nav-icon w-5 h-5 flex items-center justify-center flex-shrink-0" data-icon="LogOut"></span>
+            <span class="truncate">LogOut</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Bottom "Upgrade now!" Card -->
+      <div class="hidden lg:block px-4 mt-8">
+        <div class="relative bg-[#4cb4ab] rounded-[22px] pt-16 pb-4 px-4 text-left shadow-inner overflow-visible group">
+
+          <!-- Custom Cat Silhouette + Pastel Pink Moon Illustration -->
+          <div class="absolute -top-9 left-0 right-0 h-28 pointer-events-none flex items-center justify-center">
+            <svg width="175" height="118" viewBox="0 0 175 118" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 102 C16 74, 48 64, 68 102 Z" fill="#3da69d" opacity="0.65"/>
+              <path d="M58 102 C68 78, 105 78, 118 102 Z" fill="#63c2ba" opacity="0.5"/>
+
+              <g class="pink-moon">
+                <circle cx="127" cy="66" r="24" fill="#f7dce2" opacity="0.45"/>
+                <circle cx="127" cy="66" r="21" fill="#f3ced5"/>
+              </g>
+
+              <g class="cat-body">
+                <path d="M35 28 L37 16 L45 23 C48 22 52 22 55 24 L62 18 L61 29 C64 33 64 39 60 43 C57 46 55 48 56 54 C57 62 63 72 62 86 C61 96 54 102 42 102 L32 102 C27 102 25 97 26 90 C27 77 31 64 34 52 C36 45 33 36 35 28 Z" fill="#182036"/>
+                <ellipse class="cat-eye" cx="54" cy="31" rx="1.8" ry="1.3" fill="#fae06c"/>
+              </g>
+
+              <path class="cat-tail" d="M54 98 C68 98, 76 89, 79 75 C81 66, 84 59, 89 56 C92 54, 95 57, 92 61 C88 66, 86 73, 84 82 C81 95, 71 103, 55 103 Z" fill="#182036"/>
+
+              <rect x="18" y="101" width="90" height="4" rx="2" fill="#3b9e95" opacity="0.5"/>
+            </svg>
+          </div>
+
+          <div class="relative z-10 mt-3">
+            <div class="flex items-center gap-1.5 mb-1">
+              <h3 id="upgradeCardTitle" class="text-[16.5px] font-bold text-white leading-snug">Upgrade now!</h3>
+              <span id="proBadgeSidebar" class="hidden text-[10px] font-extrabold bg-[#fae06c] text-[#1e2538] px-2 py-0.5 rounded-full">PRO</span>
+            </div>
+            <p id="upgradeCardDesc" class="text-[11.5px] text-white/80 leading-relaxed mb-4">
+              And get full access to all features platform!
+            </p>
+            <button id="upgradeCardBtn" onclick="openUpgradeModal()" class="bg-[#fae06c] hover:bg-[#f7d648] active:scale-95 text-[#1e2538] font-bold text-[12.5px] px-6 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-200">
+              Upgrade
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ==================== MAIN WHITE CONTENT BOARD ==================== -->
+    <main class="workspace-card flex-1 bg-white rounded-[26px] px-5 py-6 sm:px-9 sm:py-7 lg:px-11 lg:py-7 shadow-sm flex flex-col relative">
+
+      <!-- PERSISTENT TOP HEADER BAR -->
+      <header class="flex-shrink-0 flex flex-wrap items-center justify-between gap-4 pb-5 z-30 bg-white">
+        <!-- Contextual Search Input -->
+        <div class="relative flex items-center w-full sm:w-72 group">
+          <svg class="w-4 h-4 text-[#1e2538] absolute left-0 pointer-events-none transition-transform duration-200 group-focus-within:scale-110 group-focus-within:text-[#29a399]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="20" y1="20" x2="16.2" y2="16.2" stroke-linecap="round"/>
+          </svg>
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search..."
+            oninput="handleGlobalSearch(this.value)"
+            class="w-full pl-7 pr-7 py-1.5 text-[13.5px] font-medium text-[#1e2538] placeholder-[#1e2538]/75 bg-transparent border-b border-transparent focus:border-[#29a399]/40 focus:outline-none transition-all"
+          />
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-1 text-xs text-greyMuted hover:text-navyText">✕</button>
+        </div>
+
+        <!-- User Profile & Notification Bell -->
+        <div class="flex items-center gap-4 ml-auto">
+          <div onclick="switchNav('Home')" class="flex items-center gap-3 cursor-pointer group" title="View Host Profile & Overview">
+            <span class="text-[13.5px] font-semibold text-[#1e2538] group-hover:text-[#29a399] transition-colors" id="hostName">Johathan Stinson</span>
+            <div class="w-9 h-9 rounded-full p-[2px] bg-[#29a399] shadow-sm transition-transform duration-200 group-hover:scale-105">
+              <img
+                id="hostAvatar"
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                onerror="this.src='https://placehold.co/80x80/29a399/ffffff?text=JS'"
+                alt="Johathan Stinson"
+                class="w-full h-full object-cover rounded-full"
+              />
+            </div>
+          </div>
+
+          <!-- Notification Bell with Popover -->
+          <div class="relative">
+            <button onclick="toggleNotifications()" class="bell-btn relative p-1.5 rounded-full hover:bg-slate-100 text-[#1e2538] transition">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span id="notifDot" class="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-[#f48fb1] ring-2 ring-white animate-pulse"></span>
+            </button>
+
+            <!-- Notification Dropdown Panel -->
+            <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-navyText uppercase tracking-wider">Notifications (3)</span>
+                <button onclick="markNotificationsRead()" class="text-[11px] font-semibold text-tealPrimary hover:underline">Mark all read</button>
+              </div>
+              <div class="space-y-2.5 text-xs">
+                <div onclick="switchNav('Bookings'); toggleNotifications();" class="p-2.5 rounded-xl bg-[#f4fbfb] hover:bg-[#e6f7f5] cursor-pointer flex items-start gap-2.5 transition">
+                  <span class="w-2 h-2 rounded-full bg-tealPrimary mt-1 flex-shrink-0"></span>
+                  <div>
+                    <p class="font-semibold text-navyText">Valencia apartment check-in</p>
+                    <p class="text-greyMuted text-[11px]">Arriving today at 12:00 • $580</p>
+                  </div>
+                </div>
+                <div onclick="switchNav('Bookings'); toggleNotifications();" class="p-2.5 rounded-xl bg-[#fefaf0] hover:bg-[#fdf3d0] cursor-pointer flex items-start gap-2.5 transition">
+                  <span class="w-2 h-2 rounded-full bg-yellowAccent mt-1 flex-shrink-0"></span>
+                  <div>
+                    <p class="font-semibold text-navyText">Night swimingpool pending</p>
+                    <p class="text-greyMuted text-[11px]">Awaiting host confirmation • $1000</p>
+                  </div>
+                </div>
+                <div onclick="switchNav('Support'); toggleNotifications();" class="p-2.5 rounded-xl bg-[#fdf2f5] hover:bg-[#fbe4eb] cursor-pointer flex items-start gap-2.5 transition">
+                  <span class="w-2 h-2 rounded-full bg-[#f48fb1] mt-1 flex-shrink-0"></span>
+                  <div>
+                    <p class="font-semibold text-navyText">New message from Sofia M.</p>
+                    <p class="text-greyMuted text-[11px]">"Can we request early check-in at 11:00?"</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- RELATIVE WRAPPER FOR FIXED-SIZE SCROLLABLE MENU CONTENT -->
+      <div class="relative flex-1 min-h-0 flex flex-col">
+        <div id="scrollShadowTop" class="scroll-shadow-top"></div>
+        <div id="scrollShadowBottom" class="scroll-shadow-bottom"></div>
+
+        <!-- SCROLLABLE VIEWPORT CONTAINER -->
+        <div id="view-scroll-container" onscroll="handleViewportScroll(this)">
+
+          <!-- ===================================================================== -->
+          <!-- VIEW 1: BOOKINGS -->
+          <!-- ===================================================================== -->
+          <div id="view-Bookings" class="page-view view-visible pb-4">
+
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-5 stagger-item" style="animation-delay: 0.04s;">
+                <h1 class="text-[28px] sm:text-[31px] font-extrabold text-[#1e2538] tracking-tight">My Bookings</h1>
+
+                <button
+                  id="downloadBtn"
+                  onclick="triggerDownloadReport()"
+                  class="inline-flex items-center gap-2.5 bg-[#29a399] hover:bg-[#228c83] active:scale-95 text-white text-[13px] font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  <span id="downloadBtnText">Download report</span>
+                </button>
+              </div>
+
+              <!-- Period Selector & Legend Row -->
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-4 stagger-item" style="animation-delay: 0.09s;">
+                <div class="relative flex items-center gap-2.5 text-[13.5px]">
+                  <span class="text-[#9ba3b5] font-medium">Period:</span>
+                  <button
+                    onclick="togglePeriodDropdown()"
+                    class="inline-flex items-center gap-2 font-semibold text-[#1e2538] hover:text-[#29a399] transition py-1 px-2 rounded-lg hover:bg-slate-50"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="17" rx="2.5"/>
+                      <line x1="16" y1="2" x2="16" y2="6"/>
+                      <line x1="8" y1="2" x2="8" y2="6"/>
+                      <line x1="3" y1="9" x2="21" y2="9"/>
+                      <circle cx="8" cy="13.5" r="1" fill="currentColor"/>
+                      <circle cx="12" cy="13.5" r="1" fill="currentColor"/>
+                      <circle cx="16" cy="13.5" r="1" fill="currentColor"/>
+                    </svg>
+                    <span id="currentPeriodLabel">1 March – 14 March</span>
+                    <svg class="w-4 h-4 text-[#1e2538] transition-transform duration-200" id="periodChevron" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </button>
+
+                  <!-- Period Options Dropdown Menu -->
+                  <div id="periodDropdown" class="hidden absolute left-14 top-9 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-40">
+                    <button onclick="selectPeriod(0, '1 March – 14 March')" class="w-full text-left px-4 py-2 text-xs font-semibold text-navyText hover:bg-[#f2fbf9] hover:text-tealPrimary flex items-center justify-between">
+                      <span>1 March – 14 March</span>
+                      <span class="w-2 h-2 rounded-full bg-tealPrimary" id="periodCheck0"></span>
+                    </button>
+                    <button onclick="selectPeriod(1, '15 March – 28 March')" class="w-full text-left px-4 py-2 text-xs font-semibold text-navyText hover:bg-[#f2fbf9] hover:text-tealPrimary flex items-center justify-between">
+                      <span>15 March – 28 March</span>
+                      <span class="w-2 h-2 rounded-full bg-tealPrimary hidden" id="periodCheck1"></span>
+                    </button>
+                    <button onclick="selectPeriod(2, '1 April – 14 April')" class="w-full text-left px-4 py-2 text-xs font-semibold text-navyText hover:bg-[#f2fbf9] hover:text-tealPrimary flex items-center justify-between">
+                      <span>1 April – 14 April</span>
+                      <span class="w-2 h-2 rounded-full bg-tealPrimary hidden" id="periodCheck2"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Chart Legend -->
+                <div class="flex items-center gap-6 text-[13px] font-semibold text-[#1e2538]">
+                  <button onclick="filterChartHighlight('today')" class="flex items-center gap-2 hover:opacity-80 transition">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#fae06c] inline-block"></span>
+                    <span>Today</span>
+                  </button>
+                  <button onclick="filterChartHighlight('earned')" class="flex items-center gap-2 hover:opacity-80 transition">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#dcf5fb] inline-block"></span>
+                    <span>Earned</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Interactive Animated Bar Chart -->
+              <section class="relative pt-3 pb-4 mb-5 stagger-item" style="animation-delay: 0.14s;">
+                <div class="flex items-stretch h-[205px] sm:h-[220px]">
+                  <div class="flex flex-col justify-between text-right pr-4 sm:pr-6 pb-7 text-[12px] font-medium text-[#9ba3b5] w-14 sm:w-16 flex-shrink-0 select-none">
+                    <span>$3.000</span>
+                    <span>$2.000</span>
+                    <span>$1.000</span>
+                    <span>$0</span>
+                  </div>
+
+                  <div id="chartPlotArea" class="relative flex-1 flex flex-col justify-between">
+                    <div class="absolute inset-x-0 top-[6px] bottom-7 flex flex-col justify-between pointer-events-none">
+                      <div class="border-b border-slate-100 w-full"></div>
+                      <div class="border-b border-slate-100 w-full"></div>
+                      <div class="border-b border-slate-100 w-full"></div>
+                      <div class="border-b border-slate-100 w-full"></div>
+                    </div>
+
+                    <div
+                      id="chartTooltip"
+                      class="chart-tooltip absolute z-20 bg-white rounded-xl px-4 py-2.5 text-center pointer-events-none min-w-[108px]"
+                      style="left: 60%; bottom: 130px; transform: translateX(-50%);"
+                    >
+                      <div id="tooltipAmount" class="text-[14.5px] font-extrabold text-[#29a399] leading-tight">$1894.83</div>
+                      <div id="tooltipSub" class="text-[11px] font-medium text-[#9ba3b5] mt-0.5">Total per day</div>
+                    </div>
+
+                    <div id="barsContainer" class="relative z-10 flex-1 grid items-end gap-1.5 sm:gap-3 pt-2 px-1 sm:px-2"></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- Bottom Section: Arriving Today & Low Occupancy Card -->
+            <section class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start stagger-item" style="animation-delay: 0.2s;">
+              <div class="lg:col-span-8 flex flex-col justify-between">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div class="flex items-center gap-3">
+                    <h2 class="text-[19px] font-extrabold text-[#1e2538] tracking-tight">Arriving today</h2>
+                    <div class="hidden sm:flex items-center gap-1 bg-slate-100 p-0.5 rounded-full text-[11px] font-bold">
+                      <button onclick="filterBookingsSubTab('All')" data-bsub="All" class="bsub-btn bg-white text-[#1e2538] px-2.5 py-1 rounded-full shadow-2xs transition">All</button>
+                      <button onclick="filterBookingsSubTab('Approved')" data-bsub="Approved" class="bsub-btn text-[#9ba3b5] hover:text-[#1e2538] px-2.5 py-1 rounded-full transition">Approved</button>
+                      <button onclick="filterBookingsSubTab('Pending')" data-bsub="Pending" class="bsub-btn text-[#9ba3b5] hover:text-[#1e2538] px-2.5 py-1 rounded-full transition">Pending</button>
+                    </div>
+                  </div>
+                  <button
+                    onclick="toggleShowAllBookings()"
+                    id="showAllBtn"
+                    class="inline-flex items-center gap-1 text-[13px] font-bold text-[#29a399] hover:text-[#1e877e] transition group"
+                  >
+                    <span id="showAllText">Show all (7)</span>
+                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" id="showAllArrow" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                      <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div id="bookingsList" class="divide-y divide-slate-100"></div>
+              </div>
+
+              <div class="lg:col-span-4 flex">
+                <div class="relative w-full bg-[#bcebf7] rounded-[24px] p-6 overflow-hidden flex flex-col justify-between min-h-[250px] shadow-sm group">
+                  <div class="relative z-10 max-w-[185px]">
+                    <h3 class="text-[18.5px] font-extrabold text-[#1e2538] leading-snug mb-2">Low occupancy!</h3>
+                    <p class="text-[12px] font-medium text-[#1e2538]/75 leading-relaxed mb-4">
+                      Create a last minute promotion to maximize
+                    </p>
+                    <button
+                      onclick="openPromoModal()"
+                      class="bg-[#fae06c] hover:bg-[#f5d442] active:scale-95 text-[#1e2538] font-bold text-[12.5px] px-6 py-2 rounded-full shadow-sm hover:shadow transition-all duration-200"
+                    >
+                      Create
+                    </button>
+                  </div>
+
+                  <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-[24px]">
+                    <svg class="w-full h-full" viewBox="0 0 240 265" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax slice">
+                      <g class="palm-fronds">
+                        <path d="M210 156 C209 134, 211 116, 214 100" stroke="#182036" stroke-width="3.2" stroke-linecap="round"/>
+                        <path d="M214 101 C200 94, 187 99, 181 108 C191 105, 203 103, 214 101 Z" fill="#1b998e"/>
+                        <path d="M214 100 C197 85, 182 84, 174 92 C187 91, 201 94, 214 100 Z" fill="#1b998e"/>
+                        <path d="M214 100 C210 82, 200 73, 191 74 C200 80, 208 89, 214 100 Z" fill="#1b998e"/>
+                        <path d="M214 100 C223 84, 234 80, 242 84 C232 87, 223 93, 214 100 Z" fill="#1b998e"/>
+                        <path d="M214 101 C226 95, 237 99, 243 107 C233 104, 223 102, 214 101 Z" fill="#1b998e"/>
+                        <path d="M214 101 C204 105, 196 115, 193 125 C201 117, 207 109, 214 101 Z" fill="#15857b"/>
+                      </g>
+                      <path d="M98 242 V222 H125 V202 H152 V182 H179 V162 H206" stroke="white" stroke-width="1.5" fill="none" opacity="0.9"/>
+                      <path d="M85 265 V250 H112 V230 H139 V210 H166 V190 H193 V170 H220 V150 H245 V265 H85 Z" fill="#f4b8c8"/>
+                      <g class="botanical-leaves">
+                        <path d="M44 265 C46 232, 60 198, 72 175 C75 203, 66 236, 56 265 Z" fill="#1b998e"/>
+                        <path d="M42 265 C28 238, 8 220, -8 214 C2 232, 18 250, 34 265 Z" fill="#1b998e"/>
+                        <path d="M45 256 C35 224, 20 202, 4 190 C12 212, 26 236, 40 258 Z" fill="#15857b"/>
+                        <path d="M52 265 C72 240, 96 224, 118 219 C98 236, 78 252, 60 265 Z" fill="#1b998e"/>
+                        <path d="M56 265 C78 252, 102 248, 122 250 C102 258, 82 263, 62 265 Z" fill="#15857b"/>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Upcoming Check-Outs & Payout Schedule -->
+            <section class="mt-8 pt-6 border-t border-slate-100 stagger-item" style="animation-delay: 0.26s;">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <div>
+                  <h3 class="text-[16.5px] font-extrabold text-[#1e2538]">Upcoming Check-outs & Payout Queue</h3>
+                  <p class="text-[11.5px] text-[#9ba3b5]">Scrollable reservation ledger & automated bank settlement status</p>
+                </div>
+                <button onclick="openNewBookingModal()" class="text-xs font-bold text-[#29a399] bg-[#def4f0] hover:bg-[#c8ede6] px-3.5 py-1.5 rounded-full transition">
+                  + Add Direct Reservation
+                </button>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                <div class="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10.5px] font-bold text-[#29a399] uppercase">Checking out 11:00</span>
+                    <h4 class="text-xs font-extrabold text-[#1e2538] mt-0.5">Nordic Sun Studio</h4>
+                    <p class="text-[11px] text-[#9ba3b5]">Lucas Meyer • 4 nights</p>
+                  </div>
+                  <span class="text-xs font-extrabold text-[#1e2538] bg-white px-2.5 py-1 rounded-xl border border-slate-100">$700</span>
+                </div>
+                <div class="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10.5px] font-bold text-[#d4a72c] uppercase">Payout Processing</span>
+                    <h4 class="text-xs font-extrabold text-[#1e2538] mt-0.5">Terracotta Penthouse</h4>
+                    <p class="text-[11px] text-[#9ba3b5]">Hannah Abbott • 3 nights</p>
+                  </div>
+                  <span class="text-xs font-extrabold text-[#29a399] bg-[#def4f0] px-2.5 py-1 rounded-xl">$930</span>
+                </div>
+                <div class="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10.5px] font-bold text-[#e06c88] uppercase">Cleaning Scheduled</span>
+                    <h4 class="text-xs font-extrabold text-[#1e2538] mt-0.5">Palm Breeze Loft</h4>
+                    <p class="text-[11px] text-[#9ba3b5]">Mateo Silva • 2 nights</p>
+                  </div>
+                  <span class="text-xs font-extrabold text-[#1e2538] bg-white px-2.5 py-1 rounded-xl border border-slate-100">$520</span>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- ===================================================================== -->
+          <!-- VIEW 2: HOME -->
+          <!-- ===================================================================== -->
+          <div id="view-Home" class="page-view pb-4">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-6 stagger-item" style="animation-delay: 0.04s;">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-[#29a399] bg-[#def4f0] px-3 py-1 rounded-full">Live Host Pulse • March 2026</span>
+                  <h1 class="text-[27px] sm:text-[30px] font-extrabold text-[#1e2538] tracking-tight mt-2">Welcome back, Johathan!</h1>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <button onclick="openNewBookingModal()" class="inline-flex items-center gap-2 bg-[#29a399] hover:bg-[#228c83] active:scale-95 text-white text-[13px] font-semibold px-5 py-2.5 rounded-full shadow-sm transition">
+                    <span>+ New Booking</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4 KPI Summary Cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 stagger-item" style="animation-delay: 0.1s;">
+                <div class="hover-lift rounded-[22px] bg-[#f4fbfb] border border-[#def4f0] p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-[#9ba3b5]">Monthly Revenue</span>
+                    <span class="w-8 h-8 rounded-xl bg-[#def4f0] text-[#29a399] flex items-center justify-center font-extrabold text-xs">$</span>
+                  </div>
+                  <div class="flex items-baseline justify-between">
+                    <span class="text-2xl font-extrabold text-[#1e2538]">$28,450</span>
+                    <span class="text-[11px] font-bold text-[#29a399] bg-white px-2 py-0.5 rounded-full shadow-2xs">+14.2%</span>
+                  </div>
+                </div>
+
+                <div class="hover-lift rounded-[22px] bg-[#fefaf0] border border-[#fae06c]/40 p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-[#9ba3b5]">Occupancy Rate</span>
+                    <span class="text-[11px] font-extrabold text-[#d4a72c] bg-[#fef8df] px-2 py-0.5 rounded-full">Peak Season</span>
+                  </div>
+                  <div class="flex items-baseline justify-between mb-1.5">
+                    <span class="text-2xl font-extrabold text-[#1e2538]">88.4%</span>
+                    <span class="text-[11px] font-semibold text-[#9ba3b5]">5 of 6 units</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-white rounded-full overflow-hidden">
+                    <div class="h-full bg-[#fae06c] rounded-full transition-all duration-1000" style="width: 88%;"></div>
+                  </div>
+                </div>
+
+                <div class="hover-lift rounded-[22px] bg-[#f2fafe] border border-[#bcebf7]/60 p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-[#9ba3b5]">Check-ins Today</span>
+                    <span class="w-8 h-8 rounded-xl bg-[#dcf5fb] text-[#1e877e] flex items-center justify-center font-bold text-xs">🔑</span>
+                  </div>
+                  <div class="flex items-baseline justify-between">
+                    <span class="text-2xl font-extrabold text-[#1e2538]">6 Guests</span>
+                    <button onclick="switchNav('Bookings')" class="text-[11px] font-bold text-[#29a399] hover:underline">View arrivals →</button>
+                  </div>
+                </div>
+
+                <div class="hover-lift rounded-[22px] bg-[#fdf4f7] border border-[#f4b8c8]/50 p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold text-[#9ba3b5]">Superhost Rating</span>
+                    <span class="text-xs font-extrabold text-[#e06c88] bg-white px-2.5 py-0.5 rounded-full">★ 4.92</span>
+                  </div>
+                  <div class="flex items-baseline justify-between">
+                    <span class="text-2xl font-extrabold text-[#1e2538]">148 Reviews</span>
+                    <span class="text-[11px] font-semibold text-[#9ba3b5]">99% 5-star</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Housekeeping & Channel Breakdown -->
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 stagger-item" style="animation-delay: 0.16s;">
+                <div class="lg:col-span-7 bg-slate-50/70 border border-slate-100 rounded-[24px] p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 class="text-[16px] font-extrabold text-[#1e2538]">Housekeeping & Room Turnovers</h3>
+                      <p class="text-[11.5px] text-[#9ba3b5]">Click any status badge to update cleaning stage in real time</p>
+                    </div>
+                    <span id="turnoverSummaryBadge" class="text-xs font-bold text-[#29a399] bg-[#def4f0] px-3 py-1 rounded-full">4 Ready</span>
+                  </div>
+                  <div id="housekeepingList" class="space-y-2.5"></div>
+                </div>
+
+                <div class="lg:col-span-5 bg-[#bcebf7]/45 border border-[#bcebf7] rounded-[24px] p-5 flex flex-col justify-between">
+                  <div>
+                    <h3 class="text-[16px] font-extrabold text-[#1e2538] mb-1">Channel Revenue Share</h3>
+                    <p class="text-[11.5px] text-[#1e2538]/70 mb-4">Direct PinHome bookings save 12% in OTA fees</p>
+
+                    <div class="space-y-3.5 text-xs">
+                      <div>
+                        <div class="flex justify-between font-bold text-[#1e2538] mb-1">
+                          <span>PinHome Direct</span>
+                          <span>54% ($15,363)</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-white rounded-full overflow-hidden">
+                          <div class="h-full bg-[#29a399] rounded-full" style="width: 54%"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="flex justify-between font-bold text-[#1e2538] mb-1">
+                          <span>Airbnb Superhost Sync</span>
+                          <span>31% ($8,819)</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-white rounded-full overflow-hidden">
+                          <div class="h-full bg-[#f49fb6] rounded-full" style="width: 31%"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="flex justify-between font-bold text-[#1e2538] mb-1">
+                          <span>Booking.com Partner</span>
+                          <span>15% ($4,268)</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-white rounded-full overflow-hidden">
+                          <div class="h-full bg-[#fae06c] rounded-full" style="width: 15%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-5 pt-4 border-t border-[#1e2538]/10 flex items-center justify-between">
+                    <span class="text-xs font-bold text-[#1e2538]">Smart Lock Auto-Codes</span>
+                    <button onclick="showToast('All 6 apartment smart-lock PINs synced for today!')" class="bg-[#fae06c] hover:bg-[#f5d442] text-[#1e2538] font-bold text-xs px-4 py-1.5 rounded-full shadow-2xs transition">
+                      Sync Keys ✓
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Guest Messages Banner -->
+            <div class="bg-[#f8fcfd] border border-slate-100 rounded-[22px] p-4 flex flex-wrap items-center justify-between gap-4 mb-6 stagger-item" style="animation-delay: 0.22s;">
+              <div class="flex items-center gap-3.5">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Guest" class="w-10 h-10 rounded-full object-cover ring-2 ring-[#29a399]/30"/>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h4 class="text-xs font-extrabold text-[#1e2538]">Elena Rostova • Valencia apartment</h4>
+                    <span class="text-[10px] font-bold bg-[#def4f0] text-[#29a399] px-2 py-0.5 rounded-full">Checking in 12:00</span>
+                  </div>
+                  <p class="text-xs text-[#9ba3b5] mt-0.5">"Hi Johathan! We just landed at Valencia airport, see you around noon!"</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="showToast('Sent keypad code & welcome guide to Elena!')" class="text-xs font-bold bg-white border border-slate-200 hover:border-[#29a399] text-[#1e2538] px-3.5 py-2 rounded-full transition">
+                  Send Keycode 🔑
+                </button>
+                <button onclick="switchNav('Support')" class="text-xs font-bold bg-[#29a399] text-white px-4 py-2 rounded-full hover:bg-[#228c83] transition">
+                  Open Inbox
+                </button>
+              </div>
+            </div>
+
+            <!-- Smart Home IoT & Energy Monitor -->
+            <div class="bg-slate-50/70 border border-slate-100 rounded-[24px] p-5 stagger-item" style="animation-delay: 0.28s;">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                  <h3 class="text-[15.5px] font-extrabold text-[#1e2538]">Smart Home Climate & Access Log</h3>
+                  <p class="text-[11.5px] text-[#9ba3b5]">Live thermostat, smart lock battery & noise sensor status across units</p>
+                </div>
+                <span class="text-[11px] font-bold text-[#29a399] bg-white px-3 py-1 rounded-full border border-slate-100">Eco Mode Active 🌱</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100">
+                  <div class="flex justify-between font-bold text-[#1e2538]"><span>Valencia Climate</span><span class="text-[#29a399]">21.5°C</span></div>
+                  <p class="text-[11px] text-[#9ba3b5] mt-1">Smart Lock Battery: 96% • Keypad Ready</p>
+                </div>
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100">
+                  <div class="flex justify-between font-bold text-[#1e2538]"><span>Night Pool Heater</span><span class="text-[#d4a72c]">28.0°C</span></div>
+                  <p class="text-[11px] text-[#9ba3b5] mt-1"> underwater LEDs scheduled for 20:00</p>
+                </div>
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100">
+                  <div class="flex justify-between font-bold text-[#1e2538]"><span>Cozy Studio Sensor</span><span class="text-[#29a399]">Quiet (34 dB)</span></div>
+                  <p class="text-[11px] text-[#9ba3b5] mt-1">Air quality: Optimal • Window sensors closed</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===================================================================== -->
+          <!-- VIEW 3: RATE PLANS -->
+          <!-- ===================================================================== -->
+          <div id="view-Rate plans" class="page-view pb-4">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-5 stagger-item" style="animation-delay: 0.04s;">
+                <div>
+                  <h1 class="text-[27px] sm:text-[30px] font-extrabold text-[#1e2538] tracking-tight">Rate Plans & Packages</h1>
+                  <p class="text-xs font-medium text-[#9ba3b5] mt-0.5">Configure seasonal multipliers, length-of-stay discounts, and cancellation tiers</p>
+                </div>
+                <button onclick="openPromoModal()" class="bg-[#29a399] hover:bg-[#228c83] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full shadow-sm transition">
+                  + Create Rate Plan
+                </button>
+              </div>
+
+              <div id="ratePlansGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 stagger-item" style="animation-delay: 0.1s;"></div>
+            </div>
+
+            <!-- Interactive 7-Day Rate Calendar Matrix -->
+            <div class="bg-slate-50/80 border border-slate-100 rounded-[24px] p-5 mb-6 stagger-item" style="animation-delay: 0.18s;">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                  <h3 class="text-[15.5px] font-extrabold text-[#1e2538]">Interactive 7-Day Rate Matrix (Mar 6 – Mar 12)</h3>
+                  <p class="text-[11.5px] text-[#9ba3b5]">Click any rate cell to cycle a +15% weekend surge or flash promo badge</p>
+                </div>
+                <div class="flex items-center gap-3 text-[11px] font-bold">
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#def4f0] inline-block"></span> Standard</span>
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#fae06c] inline-block"></span> Surge +15%</span>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[540px]">
+                  <thead>
+                    <tr class="text-[11px] font-bold text-[#9ba3b5] border-b border-slate-200/70">
+                      <th class="py-2 pr-3">Apartment Unit</th>
+                      <th class="py-2 px-2 text-center">Fri 6</th>
+                      <th class="py-2 px-2 text-center">Sat 7</th>
+                      <th class="py-2 px-2 text-center">Sun 8</th>
+                      <th class="py-2 px-2 text-center">Mon 9</th>
+                      <th class="py-2 px-2 text-center">Tue 10</th>
+                      <th class="py-2 px-2 text-center">Wed 11</th>
+                      <th class="py-2 px-2 text-center">Thu 12</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rateMatrixBody" class="divide-y divide-slate-100 text-xs"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Cancellation Policies & Channel Markup Rules -->
+            <div class="bg-[#f4fbfb] border border-[#def4f0] rounded-[24px] p-5 stagger-item" style="animation-delay: 0.24s;">
+              <h3 class="text-[15px] font-extrabold text-[#1e2538] mb-3">Channel Markups & Extra Guest Fees</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100">
+                  <span class="text-[10.5px] font-bold text-[#29a399] uppercase">Extra Guest Fee</span>
+                  <div class="text-base font-extrabold text-[#1e2538] mt-1">$25 / night</div>
+                  <p class="text-[11px] text-[#9ba3b5] mt-0.5">After 2 guests in 2-bed units</p>
+                </div>
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100">
+                  <span class="text-[10.5px] font-bold text-[#d4a72c] uppercase">Pet-Friendly Addon</span>
+                  <div class="text-base font-extrabold text-[#1e2538] mt-1">$40 / stay</div>
+                  <p class="text-[11px] text-[#9ba3b5] mt-0.5">Deep-clean sanitization included</p>
+                </div>
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100">
+                  <span class="text-[10.5px] font-bold text-[#e06c88] uppercase">Late Check-Out (16:00)</span>
+                  <div class="text-base font-extrabold text-[#1e2538] mt-1">+$45 flat</div>
+                  <p class="text-[11px] text-[#9ba3b5] mt-0.5">Auto-offered if next night is open</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===================================================================== -->
+          <!-- VIEW 4: APARTMENTS -->
+          <!-- ===================================================================== -->
+          <div id="view-Apartments" class="page-view pb-4">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-5 stagger-item" style="animation-delay: 0.04s;">
+                <div>
+                  <h1 class="text-[27px] sm:text-[30px] font-extrabold text-[#1e2538] tracking-tight">My Apartments</h1>
+                  <p class="text-xs font-medium text-[#9ba3b5] mt-0.5">Manage your 8 boutique short-term rental properties & maintenance logs</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-full">
+                  <button onclick="filterApartments('All')" data-apt-filter="All" class="apt-filter-btn bg-white text-[#1e2538] shadow-2xs text-xs font-bold px-3.5 py-1.5 rounded-full transition">All (8)</button>
+                  <button onclick="filterApartments('Occupied')" data-apt-filter="Occupied" class="apt-filter-btn text-[#9ba3b5] hover:text-[#1e2538] text-xs font-bold px-3.5 py-1.5 rounded-full transition">Occupied</button>
+                  <button onclick="filterApartments('Available')" data-apt-filter="Available" class="apt-filter-btn text-[#9ba3b5] hover:text-[#1e2538] text-xs font-bold px-3.5 py-1.5 rounded-full transition">Available</button>
+                </div>
+              </div>
+
+              <div id="apartmentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 stagger-item" style="animation-delay: 0.12s;"></div>
+            </div>
+
+            <!-- Property Amenities & Inspection Checklist -->
+            <div class="bg-slate-50/80 border border-slate-100 rounded-[24px] p-5 stagger-item" style="animation-delay: 0.2s;">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-[15.5px] font-extrabold text-[#1e2538]">Quarterly Inventory & Safety Compliance</h3>
+                <span class="text-xs font-bold text-[#29a399] bg-[#def4f0] px-3 py-1 rounded-full">100% Verified</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-extrabold text-[#1e2538]">High-Speed Mesh Wi-Fi (600 Mbps)</div>
+                    <div class="text-[11px] text-[#9ba3b5]">Active across all 8 apartments</div>
+                  </div>
+                  <span class="text-[#29a399] font-extrabold">Online ✓</span>
+                </div>
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <div class="font-extrabold text-[#1e2538]">Valencia Tourism License Registry</div>
+                    <div class="text-[11px] text-[#9ba3b5]">VT-49201-V through VT-49208-V</div>
+                  </div>
+                  <span class="text-[#29a399] font-extrabold">Active ✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===================================================================== -->
+          <!-- VIEW 5: PRICING -->
+          <!-- ===================================================================== -->
+          <div id="view-Pricing" class="page-view pb-4">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-5 stagger-item" style="animation-delay: 0.04s;">
+                <div>
+                  <h1 class="text-[27px] sm:text-[30px] font-extrabold text-[#1e2538] tracking-tight">Smart Pricing & Simulator</h1>
+                  <p class="text-xs font-medium text-[#9ba3b5] mt-0.5">AI demand-based nightly pricing & yield optimization</p>
+                </div>
+
+                <div class="flex items-center gap-3 bg-[#f4fbfb] border border-[#def4f0] px-4 py-2 rounded-full">
+                  <span class="text-xs font-extrabold text-[#1e2538]">Auto-Pilot AI Pricing</span>
+                  <button id="autopilotToggleBtn" onclick="toggleAutopilotPricing()" class="w-11 h-6 rounded-full bg-[#29a399] relative transition-colors p-0.5">
+                    <span id="autopilotKnob" class="block w-5 h-5 rounded-full bg-white shadow transform translate-x-5 transition-transform"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Interactive Simulator Grid -->
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 stagger-item" style="animation-delay: 0.1s;">
+                <div class="lg:col-span-6 bg-slate-50/80 border border-slate-100 rounded-[24px] p-5 space-y-4">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-[15.5px] font-extrabold text-[#1e2538]">Dynamic Yield Simulator</h3>
+                    <span class="text-[11px] font-bold text-[#29a399] bg-[#def4f0] px-2.5 py-0.5 rounded-full">Live Forecast</span>
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                      <span class="text-[#1e2538]">Base Nightly Rate</span>
+                      <span id="simBaseLabel" class="text-[#29a399] font-extrabold">$220 / night</span>
+                    </div>
+                    <input id="simBaseInput" type="range" min="100" max="500" step="10" value="220" oninput="updatePricingSimulator()" class="w-full accent-[#29a399] cursor-pointer"/>
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                      <span class="text-[#1e2538]">Weekend Surge (Fri–Sat)</span>
+                      <span id="simSurgeLabel" class="text-[#d4a72c] font-extrabold">+25%</span>
+                    </div>
+                    <input id="simSurgeInput" type="range" min="0" max="60" step="5" value="25" oninput="updatePricingSimulator()" class="w-full accent-[#fae06c] cursor-pointer"/>
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                      <span class="text-[#1e2538]">Last-Minute Empty Night Discount</span>
+                      <span id="simDiscountLabel" class="text-[#e06c88] font-extrabold">-15%</span>
+                    </div>
+                    <input id="simDiscountInput" type="range" min="0" max="40" step="5" value="15" oninput="updatePricingSimulator()" class="w-full accent-[#f49fb6] cursor-pointer"/>
+                  </div>
+                </div>
+
+                <div class="lg:col-span-6 bg-[#bcebf7]/50 border border-[#bcebf7] rounded-[24px] p-5 flex flex-col justify-between">
+                  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div>
+                      <span class="text-[11px] font-bold uppercase tracking-wider text-[#1e2538]/70">Projected 30-Day Revenue</span>
+                      <div id="simProjectedTotal" class="text-3xl font-extrabold text-[#1e2538] mt-0.5">$6,840</div>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-[11px] font-bold text-[#1e2538]/70">Est. Occupancy</span>
+                      <div id="simProjectedOcc" class="text-xl font-extrabold text-[#29a399]">91%</div>
+                    </div>
+                  </div>
+
+                  <div id="simBarsContainer" class="h-28 flex items-end justify-between gap-2 pt-4 pb-1 px-2 bg-white/80 rounded-2xl"></div>
+
+                  <div class="mt-3 flex items-center justify-between text-xs">
+                    <span class="font-medium text-[#1e2538]/80">Applies across all synced channels</span>
+                    <button onclick="showToast('Smart Pricing parameters saved & pushed to listings!')" class="bg-[#fae06c] hover:bg-[#f5d442] text-[#1e2538] font-bold px-4 py-1.5 rounded-full shadow-2xs transition">
+                      Apply Strategy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Automated Pricing Rules List -->
+            <div class="bg-slate-50/70 border border-slate-100 rounded-[24px] p-5 mb-6 stagger-item" style="animation-delay: 0.18s;">
+              <h3 class="text-[15px] font-extrabold text-[#1e2538] mb-3">Active Smart Automation Rules</h3>
+              <div id="pricingRulesList" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Local Market Competitor Benchmark -->
+            <div class="bg-[#fefaf0] border border-[#fae06c]/50 rounded-[24px] p-5 stagger-item" style="animation-delay: 0.24s;">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                  <h3 class="text-[15px] font-extrabold text-[#1e2538]">Valencia Market Competitor Benchmark</h3>
+                  <p class="text-[11.5px] text-[#9ba3b5]">Real-time comparison against top 10% boutique stays within 2 km</p>
+                </div>
+                <span class="text-xs font-extrabold text-[#d4a72c] bg-white px-3 py-1 rounded-full">+18% RevPAR Advantage</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div class="bg-white rounded-2xl p-3.5">
+                  <span class="text-[#9ba3b5] font-semibold">Neighborhood Avg Rate</span>
+                  <div class="text-base font-extrabold text-[#1e2538] mt-0.5">$205 / night</div>
+                </div>
+                <div class="bg-white rounded-2xl p-3.5">
+                  <span class="text-[#9ba3b5] font-semibold">Your Smart Avg Rate</span>
+                  <div class="text-base font-extrabold text-[#29a399] mt-0.5">$238 / night</div>
+                </div>
+                <div class="bg-white rounded-2xl p-3.5">
+                  <span class="text-[#9ba3b5] font-semibold">Las Fallas Festival Surge</span>
+                  <div class="text-base font-extrabold text-[#e06c88] mt-0.5">Mar 15–19 (+35%)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===================================================================== -->
+          <!-- VIEW 6: SUPPORT -->
+          <!-- ===================================================================== -->
+          <div id="view-Support" class="page-view pb-4">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-5 stagger-item" style="animation-delay: 0.04s;">
+                <div>
+                  <h1 class="text-[27px] sm:text-[30px] font-extrabold text-[#1e2538] tracking-tight">Host Support & Concierge</h1>
+                  <p class="text-xs font-medium text-[#9ba3b5] mt-0.5">24/7 Superhost priority desk & instant knowledge base</p>
+                </div>
+                <span class="inline-flex items-center gap-2 text-xs font-bold text-[#29a399] bg-[#def4f0] px-3.5 py-1.5 rounded-full">
+                  <span class="w-2 h-2 rounded-full bg-[#29a399] animate-ping"></span>
+                  All Systems Operational
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 stagger-item" style="animation-delay: 0.1s;">
+                <div class="lg:col-span-6 space-y-3">
+                  <h3 class="text-[15px] font-extrabold text-[#1e2538] mb-2">Frequently Asked Questions</h3>
+                  <div id="faqAccordionList" class="space-y-2.5"></div>
+
+                  <div class="mt-4 bg-[#fefaf0] border border-[#fae06c]/60 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                      <h4 class="text-xs font-extrabold text-[#1e2538]">Urgent Property Maintenance?</h4>
+                      <p class="text-[11px] text-[#9ba3b5] mt-0.5">24/7 Locksmith & Plumbing dispatch in Valencia</p>
+                    </div>
+                    <button onclick="showToast('On-call maintenance team alerted — callback in 3 mins!')" class="bg-[#fae06c] hover:bg-[#f5d442] text-[#1e2538] font-bold text-xs px-4 py-2 rounded-full transition">
+                      Request Call
+                    </button>
+                  </div>
+                </div>
+
+                <div class="lg:col-span-6 bg-slate-50 border border-slate-100 rounded-[24px] p-4 flex flex-col justify-between h-[420px]">
+                  <div class="flex items-center justify-between pb-3 border-b border-slate-200/70">
+                    <div class="flex items-center gap-2.5">
+                      <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80" alt="Support Agent" class="w-9 h-9 rounded-full object-cover"/>
+                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#29a399] ring-2 ring-white"></span>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-extrabold text-[#1e2538]">Clara — PinHome Concierge</h4>
+                        <p class="text-[10.5px] text-[#29a399] font-semibold">Typically replies in seconds</p>
+                      </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-[#9ba3b5] bg-white px-2.5 py-1 rounded-full">Ticket #PH-892</span>
+                  </div>
+
+                  <div id="supportChatMessages" class="flex-1 overflow-y-auto py-3 space-y-3 text-xs pr-1">
+                    <div class="flex items-start gap-2">
+                      <div class="bg-white border border-slate-100 text-[#1e2538] rounded-2xl rounded-tl-xs px-3.5 py-2.5 max-w-[85%] shadow-2xs">
+                        <p class="font-medium">Hi Johathan! 👋 How can I help you with your bookings or payouts today?</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap gap-1.5 py-2">
+                    <button onclick="sendQuickSupportPrompt('When is my March payout arriving?')" class="text-[10.5px] font-semibold bg-white hover:bg-[#def4f0] text-[#1e2538] border border-slate-200 px-2.5 py-1 rounded-full transition">
+                      💰 Next payout status
+                    </button>
+                    <button onclick="sendQuickSupportPrompt('Approve Night swimingpool booking')" class="text-[10.5px] font-semibold bg-white hover:bg-[#def4f0] text-[#1e2538] border border-slate-200 px-2.5 py-1 rounded-full transition">
+                      ✅ Approve pending booking
+                    </button>
+                    <button onclick="sendQuickSupportPrompt('Sync iCal calendar with Airbnb')" class="text-[10.5px] font-semibold bg-white hover:bg-[#def4f0] text-[#1e2538] border border-slate-200 px-2.5 py-1 rounded-full transition">
+                      🔄 Sync calendar
+                    </button>
+                  </div>
+
+                  <form onsubmit="handleChatSubmit(event)" class="flex items-center gap-2 pt-2 border-t border-slate-200/70">
+                    <input
+                      id="supportChatInput"
+                      type="text"
+                      placeholder="Type a message to PinHome Concierge..."
+                      class="flex-1 bg-white rounded-full px-4 py-2 text-xs font-medium text-[#1e2538] border border-slate-200 focus:outline-none focus:border-[#29a399]"
+                    />
+                    <button type="submit" class="bg-[#29a399] hover:bg-[#228c83] text-white font-bold text-xs px-4 py-2 rounded-full transition">
+                      Send
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Host Resource Guides & Tax Statements -->
+            <div class="bg-slate-50/80 border border-slate-100 rounded-[24px] p-5 stagger-item" style="animation-delay: 0.2s;">
+              <h3 class="text-[15px] font-extrabold text-[#1e2538] mb-3">Host Guides & Downloadable Tax Documents</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <button onclick="showToast('Downloaded Annual Host Tax Summary 2025.pdf')" class="bg-white hover:border-[#29a399] border border-slate-100 rounded-2xl p-3.5 text-left transition">
+                  <div class="font-extrabold text-[#1e2538]">📄 2025 Host Tax Statement</div>
+                  <div class="text-[11px] text-[#9ba3b5] mt-0.5">PDF • Verified earnings summary</div>
+                </button>
+                <button onclick="showToast('Opened Superhost Check-in Automation Guide')" class="bg-white hover:border-[#29a399] border border-slate-100 rounded-2xl p-3.5 text-left transition">
+                  <div class="font-extrabold text-[#1e2538]">🔐 Smart Keypad Setup Guide</div>
+                  <div class="text-[11px] text-[#9ba3b5] mt-0.5">Auto-PIN rotation & guest SMS</div>
+                </button>
+                <button onclick="showToast('Insurance coverage certificate downloaded')" class="bg-white hover:border-[#29a399] border border-slate-100 rounded-2xl p-3.5 text-left transition">
+                  <div class="font-extrabold text-[#1e2538]">🛡️ $1M Host Damage Protection</div>
+                  <div class="text-[11px] text-[#9ba3b5] mt-0.5">Policy #PH-INS-2026 active</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==================== LOCK / LOGGED-OUT SCREEN OVERLAY ==================== -->
+  <div id="loggedOutScreen" class="fixed inset-0 bg-[#dff3fc] z-50 hidden flex-col items-center justify-center p-4">
+    <div class="bg-[#29a399] rounded-[32px] p-8 sm:p-10 max-w-md w-full text-center text-white shadow-2xl">
+      <div class="w-14 h-14 rounded-2xl bg-white/15 mx-auto flex items-center justify-center mb-4">
+        <svg width="30" height="32" viewBox="0 0 26 28" fill="none">
+          <path d="M13 1.5C7.201 1.5 2.5 6.201 2.5 12C2.5 18.25 10.35 24.4 12.42 25.92C12.76 26.17 13.24 26.17 13.58 25.92C15.65 24.4 23.5 18.25 23.5 12C23.5 6.201 18.799 1.5 13 1.5Z" stroke="white" stroke-width="1.8"/>
+          <path d="M8.5 12.2L13 8.3L17.5 12.2" stroke="#fae06c" stroke-width="1.7" stroke-linecap="round"/>
+          <path d="M10 11.5V16.2H16V11.5" stroke="white" stroke-width="1.6"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-extrabold mb-1">PinHome Host Portal</h2>
+      <p class="text-xs text-white/80 mb-6">Your session is safely locked. All automated guest check-ins remain active.</p>
+
+      <div class="bg-white/10 rounded-2xl p-4 mb-6 flex items-center gap-3 text-left">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Johathan" class="w-11 h-11 rounded-full object-cover ring-2 ring-[#fae06c]"/>
+        <div>
+          <div class="text-sm font-bold">Johathan Stinson</div>
+          <div class="text-[11px] text-white/75">Superhost • 6 Active Apartments</div>
+        </div>
+      </div>
+
+      <button onclick="signBackIn()" class="w-full bg-[#fae06c] hover:bg-[#f5d442] text-[#1e2538] font-extrabold text-xs py-3 rounded-full shadow-md transition">
+        Sign Back In to Dashboard →
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE MODALS & TOAST ==================== -->
+
+  <!-- 1. Create Last-Minute Promotion Modal -->
+  <div id="promoModal" class="fixed inset-0 bg-navyText/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-[26px] max-w-md w-full p-6 sm:p-7 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="w-9 h-9 rounded-xl bg-cyanCard flex items-center justify-center text-tealPrimary font-bold">%</span>
+          <h3 class="text-lg font-extrabold text-navyText">Create Last-Minute Promotion</h3>
+        </div>
+        <button onclick="closeModal('promoModal')" class="text-greyMuted hover:text-navyText p-1">✕</button>
+      </div>
+      <p class="text-xs text-greyMuted mb-5">Boost occupancy for upcoming vacant nights across your properties.</p>
+
+      <form onsubmit="submitPromotion(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-navyText mb-1.5">Select Apartment</label>
+          <select id="promoApartment" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-semibold text-navyText focus:outline-none focus:border-tealPrimary">
+            <option value="Valencia apartment">Valencia apartment ($195/night)</option>
+            <option value="Night swimingpool">Night swimingpool ($1000/night)</option>
+            <option value="Unique & Cozy studio">Unique & Cozy studio ($384/night)</option>
+            <option value="Terracotta Penthouse">Terracotta Penthouse ($310/night)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-navyText mb-1.5">Discount Percentage: <span id="discountValueLabel" class="text-tealPrimary font-extrabold">20% OFF</span></label>
+          <input type="range" min="5" max="50" value="20" step="5" oninput="document.getElementById('discountValueLabel').innerText = this.value + '% OFF'" class="w-full accent-[#29a399] cursor-pointer"/>
+        </div>
+        <div class="flex justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeModal('promoModal')" class="px-4 py-2 rounded-full text-xs font-bold text-greyMuted hover:bg-slate-100">Cancel</button>
+          <button type="submit" class="px-6 py-2 rounded-full text-xs font-bold bg-yellowAccent hover:bg-yellowHover text-navyText shadow-sm">Launch Promotion</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. New Booking Modal -->
+  <div id="newBookingModal" class="fixed inset-0 bg-navyText/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-[26px] max-w-md w-full p-6 sm:p-7 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-extrabold text-navyText">Add Direct Booking</h3>
+        <button onclick="closeModal('newBookingModal')" class="text-greyMuted hover:text-navyText p-1">✕</button>
+      </div>
+      <form onsubmit="submitNewBooking(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-navyText mb-1">Apartment Unit</label>
+          <select id="nbTitle" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-semibold text-navyText">
+            <option value="Valencia apartment">Valencia apartment</option>
+            <option value="Night swimingpool">Night swimingpool</option>
+            <option value="Unique & Cozy studio">Unique & Cozy studio</option>
+            <option value="Terracotta Penthouse">Terracotta Penthouse</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-navyText mb-1">Nights</label>
+            <input id="nbNights" type="number" min="1" max="30" value="3" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-semibold text-navyText"/>
+          </div>
+          <div>
+            <label class="block font-bold text-navyText mb-1">Total Payout ($)</label>
+            <input id="nbPrice" type="number" min="100" max="9999" value="750" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-semibold text-navyText"/>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('newBookingModal')" class="px-4 py-2 rounded-full font-bold text-greyMuted hover:bg-slate-100">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-full font-bold bg-[#29a399] text-white">Create Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Upgrade Plan Modal -->
+  <div id="upgradeModal" class="fixed inset-0 bg-navyText/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-[26px] max-w-md w-full p-6 sm:p-7 shadow-2xl text-center">
+      <div class="w-14 h-14 rounded-2xl bg-[#def4f0] text-tealPrimary mx-auto flex items-center justify-center mb-4">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-extrabold text-navyText mb-1.5">PinHome Pro Platform</h3>
+      <p class="text-xs text-greyMuted mb-5">Unlock AI dynamic pricing, automated guest check-in messages, and multi-channel calendar sync.</p>
+      <div class="bg-slate-50 rounded-2xl p-4 mb-5 text-left space-y-2 text-xs font-medium text-navyText">
+        <div class="flex items-center gap-2"><span class="text-tealPrimary font-bold">✓</span> Unlimited apartment listings & rate plans</div>
+        <div class="flex items-center gap-2"><span class="text-tealPrimary font-bold">✓</span> Smart occupancy booster & revenue forecasting</div>
+        <div class="flex items-center gap-2"><span class="text-tealPrimary font-bold">✓</span> Priority 24/7 host support</div>
+      </div>
+      <div class="flex gap-3 justify-center">
+        <button onclick="closeModal('upgradeModal')" class="px-5 py-2.5 rounded-full text-xs font-bold text-greyMuted hover:bg-slate-100">Maybe later</button>
+        <button onclick="activateProUpgrade()" class="px-6 py-2.5 rounded-full text-xs font-bold bg-tealPrimary hover:bg-tealDark text-white shadow-md">Upgrade — $29/mo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. LogOut Confirmation & Shift Summary Modal -->
+  <div id="logoutModal" class="fixed inset-0 bg-navyText/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-[26px] max-w-sm w-full p-6 sm:p-7 shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-2xl bg-[#fef8df] text-[#d4a72c] mx-auto flex items-center justify-center mb-3 font-extrabold">👋</div>
+      <h3 class="text-lg font-extrabold text-navyText mb-1">Ready to wrap up, Johathan?</h3>
+      <p class="text-xs text-greyMuted mb-4">Here is your live host summary for today before signing out:</p>
+      <div class="grid grid-cols-2 gap-2.5 bg-slate-50 rounded-2xl p-3.5 mb-5 text-xs">
+        <div>
+          <div class="text-greyMuted font-medium">Earned Today</div>
+          <div class="text-sm font-extrabold text-tealPrimary">$1,894.83</div>
+        </div>
+        <div>
+          <div class="text-greyMuted font-medium">Arrivals Ready</div>
+          <div class="text-sm font-extrabold text-navyText">3 Check-ins</div>
+        </div>
+      </div>
+      <div class="flex gap-2.5 justify-center">
+        <button onclick="closeModal('logoutModal')" class="flex-1 py-2.5 rounded-full text-xs font-bold text-greyMuted hover:bg-slate-100">Stay Logged In</button>
+        <button onclick="confirmLogout()" class="flex-1 py-2.5 rounded-full text-xs font-bold bg-[#1e2538] hover:bg-slate-800 text-white shadow-sm">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Toast Notification -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

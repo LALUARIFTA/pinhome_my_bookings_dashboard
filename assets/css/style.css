@@ -1,0 +1,373 @@
+/* ==========================================================================
+   PinHome Dashboard - Modern Design System & Component Styles
+   ========================================================================== */
+
+:root {
+  --color-sky-bg: #dff3fc;
+  --color-teal-primary: #29a399;
+  --color-teal-dark: #1e877e;
+  --color-teal-card: #4cb4ab;
+  --color-navy-text: #1e2538;
+  --color-grey-muted: #9ba3b5;
+  --color-yellow-accent: #fae06c;
+  --color-yellow-hover: #f5d442;
+  --color-cyan-bar: #dcf5fb;
+  --color-cyan-card: #bcebf7;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-sky-bg);
+  color: var(--color-navy-text);
+  overflow-x: hidden;
+}
+
+/* Background waves */
+.bg-waves {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Main Outer Teal Frame */
+.app-frame {
+  background-color: var(--color-teal-primary);
+  border-radius: 34px;
+  padding: 12px 12px 12px 0;
+  box-shadow: 0 30px 70px -15px rgba(24, 108, 101, 0.24),
+              0 10px 25px -10px rgba(24, 108, 101, 0.14);
+  position: relative;
+  z-index: 10;
+}
+
+@media (min-width: 1024px) {
+  .app-frame {
+    height: min(760px, 92vh);
+    min-height: 700px;
+    max-height: 760px;
+    overflow: hidden;
+  }
+  .workspace-card {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 1023px) {
+  .app-frame {
+    padding: 12px;
+    border-radius: 26px;
+  }
+  .workspace-card {
+    height: 740px;
+    max-height: 85vh;
+    overflow: hidden;
+  }
+}
+
+/* Sliding Sidebar Pill with Inverted Concave Curves */
+#active-nav-pill {
+  position: absolute;
+  left: 16px;
+  right: 0;
+  height: 44px;
+  background-color: #ffffff;
+  border-top-left-radius: 9999px;
+  border-bottom-left-radius: 9999px;
+  transition: top 0.48s cubic-bezier(0.34, 1.56, 0.64, 1),
+              height 0.3s ease,
+              opacity 0.25s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  #active-nav-pill::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -20px;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border-bottom-right-radius: 20px;
+    box-shadow: 6px 6px 0 6px #ffffff;
+    pointer-events: none;
+  }
+
+  #active-nav-pill::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -20px;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border-top-right-radius: 20px;
+    box-shadow: 6px -6px 0 6px #ffffff;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  #active-nav-pill {
+    right: 16px;
+    border-radius: 9999px;
+  }
+}
+
+.nav-item {
+  position: relative;
+  z-index: 2;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-item.active {
+  color: var(--color-navy-text) !important;
+  font-weight: 700;
+}
+
+@keyframes navIconPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.26) rotate(-6deg); }
+  75% { transform: scale(0.94) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.nav-item.active .nav-icon {
+  animation: navIconPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Internal Scrollable Viewport */
+#view-scroll-container {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  padding-right: 6px;
+  margin-right: -6px;
+}
+
+#view-scroll-container::-webkit-scrollbar {
+  width: 5px;
+}
+#view-scroll-container::-webkit-scrollbar-track {
+  background: rgba(223, 243, 252, 0.35);
+  border-radius: 9999px;
+}
+#view-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(41, 163, 153, 0.32);
+  border-radius: 9999px;
+}
+#view-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(41, 163, 153, 0.6);
+}
+
+.scroll-shadow-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 6px;
+  height: 18px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.96), rgba(255,255,255,0));
+  pointer-events: none;
+  z-index: 25;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.scroll-shadow-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 6px;
+  height: 24px;
+  background: linear-gradient(to top, rgba(255,255,255,0.96), rgba(255,255,255,0));
+  pointer-events: none;
+  z-index: 25;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+/* Page Transition & Stagger Animations */
+@keyframes viewStaggerIn {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.page-view {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px) scale(0.99);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.page-view.view-visible {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.page-view.view-exiting {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.985);
+  pointer-events: none;
+}
+
+.stagger-item {
+  opacity: 0;
+  animation: viewStaggerIn 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Illustrations Keyframes */
+@keyframes catTailWag {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(11deg); }
+}
+
+@keyframes catHeadTilt {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-3.5deg) translateY(-1px); }
+}
+
+@keyframes catBlink {
+  0%, 44%, 48%, 96%, 100% { transform: scaleY(1); }
+  46%, 98% { transform: scaleY(0.1); }
+}
+
+@keyframes moonFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-4px) scale(1.03); }
+}
+
+@keyframes palmSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4.5deg); }
+}
+
+@keyframes leafBreeze {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(-3.5deg) scale(1.02); }
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(14deg); }
+  40% { transform: rotate(-12deg); }
+  60% { transform: rotate(8deg); }
+  80% { transform: rotate(-6deg); }
+}
+
+.cat-tail {
+  transform-origin: 55px 102px;
+  animation: catTailWag 3.2s ease-in-out infinite;
+}
+
+.cat-body {
+  transform-origin: 40px 100px;
+  animation: catHeadTilt 4.5s ease-in-out infinite;
+}
+
+.cat-eye {
+  transform-origin: 53px 31px;
+  animation: catBlink 5.5s infinite;
+}
+
+.pink-moon {
+  animation: moonFloat 4s ease-in-out infinite;
+}
+
+.palm-fronds {
+  transform-origin: 185px 108px;
+  animation: palmSway 3.6s ease-in-out infinite;
+}
+
+.botanical-leaves {
+  transform-origin: 45px 220px;
+  animation: leafBreeze 4.2s ease-in-out infinite;
+}
+
+.bell-btn:hover svg {
+  animation: bellRing 0.65s ease-in-out;
+}
+
+/* Bar Chart Spring Animation */
+.chart-bar-fill {
+  transition: height 0.7s cubic-bezier(0.34, 1.45, 0.64, 1),
+              background-color 0.28s ease,
+              transform 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+.chart-col:hover .chart-bar-fill {
+  transform: scaleX(1.08) translateY(-2px);
+}
+
+/* Floating Chart Tooltip Card */
+.chart-tooltip {
+  transition: left 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+              bottom 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.25s ease;
+  box-shadow: 0 10px 28px -4px rgba(30, 37, 56, 0.12),
+              0 4px 10px -2px rgba(30, 37, 56, 0.05);
+}
+
+.chart-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 7px 7px 0;
+  border-style: solid;
+  border-color: #ffffff transparent transparent transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(41, 163, 153, 0.25);
+  border-radius: 9999px;
+}
+
+/* Booking & Interactive Card Hover Effects */
+.booking-row {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.booking-row:hover {
+  background-color: #f8fcfd;
+  transform: translateX(4px);
+}
+
+.hover-lift {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px -10px rgba(30, 37, 56, 0.1);
+}
